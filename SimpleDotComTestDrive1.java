@@ -49,7 +49,7 @@ public class SimpleDotComTestDrive1 {
 		dot.setLocationCells(location);
 		boolean isAlive = true;
 		while (isAlive == true) {
-			String userGuess = helper.userInput("Enter a number: ");
+			String userGuess = helper.userInput("Enter a number(0-6): ");
 			String result = dot.checkUserValue(userGuess);
 			numOfGuesses++;
 			if (result.equals("kill")) {
