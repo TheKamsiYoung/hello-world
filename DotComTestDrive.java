@@ -7,12 +7,12 @@ class DotCom {
 	String checkUserValue(String userValue) {
 		int coordinate = Integer.parseInt(userValue);
 		String guess = "miss";
-		boolean isMember = locationCells.contains(userValue);
-			if (isMember = true) {
-				if (locationCells.isEmpty() == true) {
+        
+			if (locationCells.contains(userValue)) {
+                locationCells.remove(userValue);
+				if (locationCells.isEmpty()) {
 					guess = "kill";
-				}
-				else {
+				}else {
 					guess = "hit";
 				}
 			}
@@ -39,11 +39,15 @@ class GameHelper {
 public class DotComTestDrive {
 	public static void main (String[] args) {
 		int numOfGuesses = 0;
-		SimpleDotCom dot = new SimpleDotCom();
+		DotCom dot = new DotCom();
 		GameHelper helper = new GameHelper();
 		int randomNumber = (int) (Math.random()*5);
-		int[] location = {randomNumber, randomNumber + 1, randomNumber + 2};
-		dot.setLocationCells(location);
+        
+        ArrayList<String> randomNumberList = new ArrayList<>(Arrays.asList(String.valueOf(randomNumber),
+                                                               String.valueOf(randomNumber + 1), String.valueOf(randomNumber + 2)));
+
+		//int[] location = {randomNumber, randomNumber + 1, randomNumber + 2};
+		dot.setLocationCells(randomNumberList);
 		boolean isAlive = true;
 		while (isAlive == true) {
 			String userGuess = helper.userInput("Enter a number: ");
