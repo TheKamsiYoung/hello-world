@@ -8,7 +8,7 @@ class SimpleDotCom {
 		int coordinate = Integer.parseInt(value);
 		String guess = "miss";
 		for (int cell : locationCells) {
-			if (cell == count) {
+			if (coordinate == cell) {
 				numOfHits++;
 				if (numOfHits == 3) {
 					guess = "kill";
