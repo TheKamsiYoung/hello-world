@@ -10,7 +10,7 @@ class SimpleDotCom {
 		for (int cell : locationCells) {
 			if (coordinate == cell) {
 				numOfHits++;
-				if (numOfHits == 3) {
+				if (numOfHits == locationCells.length) {
 					guess = "kill";
 				}
 				else {
