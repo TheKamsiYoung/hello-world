@@ -3,15 +3,15 @@ import java.util.*;
 class SimpleDotCom {
 	int[] locationCells;
 	int numOfHits;
-	
+
 	String checkUserValue(String value) {
 		int coordinate = Integer.parseInt(value);
 		String guess = "miss";
-		for (int count : locationCells) {
-			if (coordinate == count) {
+		for (int cell : locationCells) {
+			if (cell == count) {
 				numOfHits++;
 				if (numOfHits == 3) {
-					guess = "kill"; 
+					guess = "kill";
 				}
 				else {
 					guess = "hit";
