@@ -1,29 +1,26 @@
 import java.util.*;
 
-class SimpleDotCom {
-	int[] locationCells;
-	int numOfHits;
+class DotCom {
+	 private ArrayList<String> locationCells;
+	// int numOfHits;
 
-	String checkUserValue(String value) {
-		int coordinate = Integer.parseInt(value);
+	String checkUserValue(String userValue) {
 		String guess = "miss";
-		for (int cell : locationCells) {
-			if (coordinate == cell) {
-				numOfHits++;
-				if (numOfHits == locationCells.length) {
-					guess = "kill";
-				}
-				else {
-					guess = "hit";
-				}
-				break;
+		boolean isMember = locationCells.contains(userValue);
+		if (isMember = true) {
+				locationCells.remove(userValue);
+			if (locationCells.isEmpty()) {
+				guess = "kill";
+			}
+			else {
+				guess = "hit";
 			}
 		}
 		System.out.println(guess);
 		return guess;
 	}
-	void setLocationCells(int[] array) {
-		locationCells = array;
+	void setLocationCells(ArrayList<String> arrayLocation) {
+		locationCells = arrayLocation;
 	}
 }
 
