@@ -13,7 +13,7 @@ class Account {
 	//Invoke Account Manager
 	AccountManager manager = new AccountManager();
 	
-	//Constructor Overloaded
+	//Constructor
 	public Account(String accountName) {
 		this.accountName = accountName;
 		accountBalance = DEFAULT_BALANCE;
@@ -77,6 +77,7 @@ class Account {
 }
 
 class AccountManager {
+	//Invoke AccountHelper 
 	AccountHelper helper = new AccountHelper();
 	
 	//Create account
@@ -145,6 +146,18 @@ class AccountManager {
 		}
 		helper.resultPrinter(totalCashFlow);
 	}
+	
+	//Generate random transaction
+	public void generateRandomTransaction(Account account, int numOfTrans) {
+		Random randTrans = new Random();
+		
+		for (int counter = numOfTrans; counter > 0; counter--) {
+			double randAmount = (double) (Math.random()*100000);
+			int randTransType = randTrans.nextInt(2);
+			if (randTransType == 1) debit(account, randAmount);
+			else if (randTransType == 0) credit(account, randAmount);
+		}
+	}
 }
 
 class AccountTransaction {
@@ -186,6 +199,7 @@ class AccountTransaction {
 }
 
 class AccountHelper {
+	
 	//Capture and return date
 	public Date getDate() {
 		LocalDate endDate = LocalDate.now(); //end date
@@ -212,26 +226,26 @@ class AccountHelper {
 class Accountant {
 	public static void main(String[] args) {
 		AccountManager am = new AccountManager();
-		Account account_1 = am.createAccount("Kamsi Udochi");
-		Account account_2 = am.createAccount("Young Udochi");
 		
-		System.out.println("\nKamsi's Balance is: " + account_1.getAccountBalance());
+		//Create first account
+		Account account_1 = am.createAccount("Enter Account Name: ");
+		System.out.printf("\nKamsi's Balance is: %.2f\n", account_1.getAccountBalance());
 		am.debit(account_1, 550);
 		am.credit(account_1, 16500);
-		am.credit(account_1, 16465500);
-		am.debit(account_1, 13649785);
-		
+		am.generateRandomTransaction(account_1, 10);
 		am.printStatement(account_1);
-		System.out.println("\n\nKamsi's new Balance is: " + account_1.getAccountBalance() + "\n");
+		System.out.printf("\n\nKamsi's new Balance is: %.2f\n", account_1.getAccountBalance());
 		System.out.println("\n");
 		
-		System.out.println("Young's Balance is: " + account_2.getAccountBalance() + "\n");
+		//Create Second account
+		Account account_2 = am.createAccount("Enter Account Name: ");
+		System.out.printf("Young's Balance is: %.2f\n", account_2.getAccountBalance());
 		am.credit(account_2, 1500);
 		am.debit(account_2, 350);
 		am.credit(account_2, 750);
-	
+		am.generateRandomTransaction(account_2, 5);
 		am.printStatement(account_2);
-		System.out.printf("\nYoung's new Balance is: " + account_2.getAccountBalance() + "\n");
+		System.out.printf("\nYoung's new Balance is: %.2f\n", account_2.getAccountBalance());
 		
 	}
 }
