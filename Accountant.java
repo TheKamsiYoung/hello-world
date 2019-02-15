@@ -71,7 +71,15 @@ class Account {
 		}
 		return transList;
 	}
-	
+	public ArrayList<AccountTransaction> getTransaction(boolean isInvalid) {
+		ArrayList<AccountTransaction> transList = new ArrayList<>();
+		for (AccountTransaction transactionToCheck : transactionList) {
+			if (transactionToCheck.isTransactionInvalid() == isInvalid) {
+				transList.add(transactionToCheck);
+			}
+		}
+		return transList;
+	}
 }
 
 class AccountManager {
@@ -81,6 +89,7 @@ class AccountManager {
 		Account newAccount = new Account(accountName);
 		return newAccount;
 	}
+	
 	//Generate account number
 	public long generateAccountNumber() {
 		return 123456789;
@@ -248,7 +257,8 @@ class AccountHelper {
 }
 
 class Accountant {
-	public static void main(String[] args) {
+	public static void main(String[] args) {  //You may express your accountant nature in this section
+		
 		AccountManager am = new AccountManager();
 		
 		//Create first account
