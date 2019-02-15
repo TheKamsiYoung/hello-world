@@ -252,8 +252,8 @@ class Accountant {
 		AccountManager am = new AccountManager();
 		
 		//Create first account
-		Account account_1 = am.createAccount("Enter Account Name: ");
-		System.out.printf("%s's is: %.2f\n",account_1.getAccountName(), account_1.getAccountBalance());
+		Account account_1 = am.createAccount("Young Udochi");
+		System.out.printf("\n%s's balance is: %.2f\n",account_1.getAccountName(), account_1.getAccountBalance());
 		am.debit(account_1, 550);
 		am.credit(account_1, 16500);
 		am.generateRandomTransaction(account_1, 10);
@@ -262,8 +262,8 @@ class Accountant {
 		System.out.println("\n");
 		
 		//Create Second account
-		Account account_2 = am.createAccount("Enter Account Name: ");
-		System.out.printf("%s's is: %.2f\n", account_2.getAccountName(), account_2.getAccountBalance());
+		Account account_2 = am.createAccount("Kamsi Udochi");
+		System.out.printf("\n%s's balance is: %.2f\n", account_2.getAccountName(), account_2.getAccountBalance());
 		am.credit(account_2, 1500);
 		am.debit(account_2, 350);
 		am.credit(account_2, 750);
