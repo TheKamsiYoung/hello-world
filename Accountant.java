@@ -10,7 +10,7 @@ class Account {
 	private double accountBalance;
 	private ArrayList<AccountTransaction> transactionList = new ArrayList<>();
 	
-	//Instantiate other account classes
+	//Invoke Account Manager
 	AccountManager manager = new AccountManager();
 	
 	//Constructor Overloaded
