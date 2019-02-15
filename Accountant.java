@@ -4,20 +4,20 @@ import java.time.*;
 
 class Account {
 	//User Details
+	final double DEFAULT_BALANCE = 5000.0;
 	private String accountName;
 	private long accountNumber;
 	private double accountBalance;
 	private ArrayList<AccountTransaction> transactionList = new ArrayList<>();
 	
-	//Constructor
-	public Account() {}
+	//Instantiate other account classes
+	AccountManager manager = new AccountManager();
+	
+	//Constructor Overloaded
 	public Account(String accountName) {
 		this.accountName = accountName;
-	}
-	public Account(String accountName, double accountBalance) {
-		this.accountName = accountName;
-		this.accountNumber = accountNumber;
-		this.accountBalance = accountBalance;
+		accountBalance = DEFAULT_BALANCE;
+		accountNumber = manager.generateAccountNumber();
 	}
 	
 	//Mutator methods
@@ -27,6 +27,7 @@ class Account {
 	public void setAccountBalance(double accountBalance) {
 		this.accountBalance = accountBalance;
 	}
+	
 	public void addTransaction(AccountTransaction newTransaction) {
 		transactionList.add(newTransaction);
 	}
@@ -41,32 +42,33 @@ class Account {
 	public double getAccountBalance() {
 		return accountBalance;
 	}
+	//Get specific List of Transactions Overloaded
 	public ArrayList<AccountTransaction> getTransaction() {
 		return transactionList;
 	}
 	public ArrayList<AccountTransaction> getTransaction(Date transactionDate) {
 		ArrayList<AccountTransaction> transList = new ArrayList<>();
-		for (AccountTransaction transaction : transactionList) {
-			if (transaction.checkTransaction(transactionDate)) {
-				 transList.add(transaction);
+		for (AccountTransaction transactionToCheck : transactionList) {
+			if (transactionToCheck.isTransactionAMatch(transactionDate)) {
+				 transList.add(transactionToCheck);
 			}
 		}
 		return transList;
 	}
 	public ArrayList<AccountTransaction> getTransaction(String transType) {
 		ArrayList<AccountTransaction> transList = new ArrayList<>();
-		for (AccountTransaction transaction : transactionList) {
-			if (transaction.checkTransaction(transType)) {
-				transList.add(transaction);
+		for (AccountTransaction transactionToCheck : transactionList) {
+			if (transactionToCheck.isTransactionAMatch(transType)) {
+				transList.add(transactionToCheck);
 			}
 		}
 		return transList;
 	}
 	public ArrayList<AccountTransaction> getTransaction(double amount) {
 		ArrayList<AccountTransaction> transList = new ArrayList<>();
-		for (AccountTransaction transaction : transactionList) {
-			if (transaction.checkTransaction(amount)) {
-				transList.add(transaction);
+		for (AccountTransaction transactionToCheck : transactionList) {
+			if (transactionToCheck.isTransactionAMatch(amount)) {
+				transList.add(transactionToCheck);
 			}
 		}
 		return transList;
@@ -77,15 +79,19 @@ class Account {
 class AccountManager {
 	AccountHelper helper = new AccountHelper();
 	
+	//Create account
+	public Account createAccount(String accountName) {
+		Account newAccount = new Account(accountName);
+		return newAccount;
+	}
 	//Generate account number
-	public long generateAccountNum() {
-		long accountNumber = helper.getAccountNumber();
-		return accountNumber;
+	public long generateAccountNumber() {
+		return 123456789;
 	}
 	
 	//Debit account
 	public void debit(Account accountToDebit, double amount) {
-		AccountTransaction newTransaction = new AccountTransaction(amount, "debit");
+		AccountTransaction newTransaction = new AccountTransaction(amount, "Debit");
 		accountToDebit.addTransaction(newTransaction);
 		double oldBalance = accountToDebit.getAccountBalance();
 		accountToDebit.setAccountBalance(oldBalance - amount);
@@ -93,49 +99,67 @@ class AccountManager {
 	
 	//Credit account
 	public void credit(Account accountToCredit, double amount) {
-		AccountTransaction newTransaction = new AccountTransaction(amount, "credit");
+		AccountTransaction newTransaction = new AccountTransaction(amount, "Credit");
 		accountToCredit.addTransaction(newTransaction);
 		double oldBalance = accountToCredit.getAccountBalance();
 		accountToCredit.setAccountBalance(oldBalance + amount);
 	}
 	
-	//Print Statement
+	//Print Account Statement Overloaded
 	public void printStatement(Account accountToPrint) {
-		System.out.println("s/n        Transaction        Time");
-		System.out.println("----------------------------------------------------------");
+		double totalCashFlow = 0.0;
+		helper.tablePrinter();
 		for (AccountTransaction transToPrint : accountToPrint.getTransaction()) {
 			transToPrint.printTransaction();
+			if (transToPrint.isTransactionAMatch("Debit")) {
+				totalCashFlow -= transToPrint.getAmount();
+			}else if (transToPrint.isTransactionAMatch("Credit")) {
+				totalCashFlow += transToPrint.getAmount();
+			}
 		}
+		helper.resultPrinter(totalCashFlow);
 	}
 	public void printStatement(Account accountToPrint, String transType) {
-		System.out.println("s/n        Transaction        Time");
-		System.out.println("----------------------------------------------------------");
+		double totalCashFlow = 0.0;
+		helper.tablePrinter();
 		for (AccountTransaction transToPrint : accountToPrint.getTransaction(transType)) {
-			transToPrint.printTransaction(transType);
+			transToPrint.printTransaction();
+			if (transType.equals("Debit")) {
+				totalCashFlow -= transToPrint.getAmount();
+			}else if (transType.equals("Credit")) {
+				totalCashFlow += transToPrint.getAmount();
+			}
 		}
+		helper.resultPrinter(totalCashFlow);
 	}
 	public void printStatement(Account accountToPrint, Date transactionDate) {
-		System.out.println("s/n        Transaction        Time");
-		System.out.println("----------------------------------------------------------");
+		double totalCashFlow = 0.0;
+		helper.tablePrinter();
 		for (AccountTransaction transToPrint : accountToPrint.getTransaction(transactionDate)) {
-			transToPrint.printTransaction(transactionDate);
+			transToPrint.printTransaction();
+			if (transToPrint.isTransactionAMatch("Debit")) {
+				totalCashFlow -= transToPrint.getAmount();
+			}else if (transToPrint.isTransactionAMatch("Credit")) {
+				totalCashFlow += transToPrint.getAmount();
+			}
 		}
+		helper.resultPrinter(totalCashFlow);
 	}
 }
 
 class AccountTransaction {
-	AccountHelper helper1 = new AccountHelper();
+	AccountHelper helper = new AccountHelper();
 	
-	private Date transactionDate = helper1.getDate();
+	private Date transactionDate = helper.getDate();
 	private double amount;
 	private String transactionType;
 	
 	//Constructor
-	public AccountTransaction() {}
 	public AccountTransaction(double amount, String transactionType) {
 		this.amount = amount;
 		this.transactionType = transactionType;
 	}
+	
 	//Accessors
 	public Date getTransactionDate() {
 		return transactionDate;
@@ -144,46 +168,25 @@ class AccountTransaction {
 		return amount;
 	}
 	
-	//Transaction Filter
-	public boolean checkTransaction(String transactionType) {
-		boolean isMatch = false;
-		if (this.transactionType.equals(transactionType)) {
-			isMatch = true;
-		}
-		return isMatch;
+	//Transaction Filter Overloaded
+	public boolean isTransactionAMatch(String transactionType) {
+		return this.transactionType == transactionType;
 	}
-	public boolean checkTransaction(double amount) {
-		boolean isMatch = false;
-		if (this.amount == amount) {
-			isMatch = true;
-		}
-		return isMatch;
+	public boolean isTransactionAMatch(double amount) {
+		return this.amount == amount;
 	}
-	public boolean checkTransaction(Date transactionDate) {
-		boolean isMatch = false;
-		if (this.transactionDate == transactionDate) {
-			isMatch = true;
-		}
-		return isMatch;
+	public boolean isTransactionAMatch(Date transactionDate) {
+		return this.transactionDate == transactionDate;
 	}
 	
 	//Print transaction
 	public void printTransaction() {
-			System.out.println(amount + "         " + transactionType + "         " + transactionDate);
-	}
-	public void printTransaction(String transactionType) {
-		if (this.transactionType.equals(transactionType)) {
-			System.out.println(amount + "         " + transactionType + "         " + transactionDate);
-		}
-	}
-	public void printTransaction(Date transactionDate) {
-		if (this.transactionDate.equals(transactionDate)) {
-			System.out.println(amount + "         " + transactionType + "         " + transactionDate);
-		}
+			helper.tablePrinter(amount, transactionType, transactionDate);
 	}
 }
 
 class AccountHelper {
+	//Capture and return date
 	public Date getDate() {
 		LocalDate endDate = LocalDate.now(); //end date
 		long end = endDate.toEpochDay();
@@ -191,26 +194,44 @@ class AccountHelper {
 		return date;
 	}
 	
-	public long getAccountNumber() {
-		return 123456789;
+	//Print formatted Table (Overloaded)
+	public void tablePrinter() {
+		System.out.printf("%15s%15s%-30s%s\n", "Amount", "", "Transaction", "Date");
+		System.out.println("-----------------------------------------------------------------------------------------");
+	}
+	public void tablePrinter(double amount, String transactionType, Date transactionDate) {
+		System.out.printf("%15.2f%15s%-30s%s\n", amount, "", transactionType, transactionDate);
+	}
+	public void resultPrinter(double result) {
+		System.out.println("---------------------");
+		System.out.printf("%15.2f\n", result);
+		System.out.println("---------------------");
 	}
 }
 
 class Accountant {
 	public static void main(String[] args) {
 		AccountManager am = new AccountManager();
-		Account account_1 = new Account("Kamsi Udochi", 15000);
-		Account account_2 = new Account("Young Udochi", 25000);
+		Account account_1 = am.createAccount("Kamsi Udochi");
+		Account account_2 = am.createAccount("Young Udochi");
 		
+		System.out.println("\nKamsi's Balance is: " + account_1.getAccountBalance());
 		am.debit(account_1, 550);
 		am.credit(account_1, 16500);
+		am.credit(account_1, 16465500);
+		am.debit(account_1, 13649785);
+		
+		am.printStatement(account_1);
+		System.out.println("\n\nKamsi's new Balance is: " + account_1.getAccountBalance() + "\n");
+		System.out.println("\n");
+		
+		System.out.println("Young's Balance is: " + account_2.getAccountBalance() + "\n");
 		am.credit(account_2, 1500);
 		am.debit(account_2, 350);
 		am.credit(account_2, 750);
-		
-		am.printStatement(account_1);
-		System.out.println("\n");
-		am.printStatement(account_2, "credit" );
+	
+		am.printStatement(account_2);
+		System.out.printf("\nYoung's new Balance is: " + account_2.getAccountBalance() + "\n");
 		
 	}
 }
