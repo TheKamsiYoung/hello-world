@@ -44,7 +44,7 @@ class Account {
 	public ArrayList<AccountTransaction> getTransaction() {
 		return transactionList;
 	}
-	public ArrayList<AccountTransaction> getTransaction(Date transactionDate) {
+	public ArrayList<AccountTransaction> getTransaction(Calendar transactionDate) {
 		ArrayList<AccountTransaction> transList = new ArrayList<>();
 		for (AccountTransaction transactionToCheck : transactionList) {
 			if (transactionToCheck.isTransactionAMatch(transactionDate)) {
@@ -106,6 +106,7 @@ class AccountManager {
 			newTransaction.setInvalidTransaction();
 			accountToDebit.addTransaction(newTransaction);
 		}
+		AccountHelper.setDate();
 	}
 	
 	//Credit account
@@ -114,6 +115,7 @@ class AccountManager {
 		accountToCredit.addTransaction(newTransaction);
 		double oldBalance = accountToCredit.getAccountBalance();
 		accountToCredit.setAccountBalance(oldBalance + amount);
+		AccountHelper.setDate();
 	}
 	
 	//Print Account Statement Overloaded
@@ -149,7 +151,7 @@ class AccountManager {
 		}
 		helper.resultPrinter(totalCashFlow);
 	}
-	public void printStatement(Account accountToPrint, Date transactionDate) {
+	public void printStatement(Account accountToPrint, Calendar transactionDate) {
 		AccountHelper helper = new AccountHelper();
 		double totalCashFlow = 0.0;
 		helper.header();
@@ -181,7 +183,7 @@ class AccountManager {
 
 class AccountTransaction {
 	AccountHelper helper = new AccountHelper();
-	private Date transactionDate = helper.getDate();
+	private Calendar transactionDate = AccountHelper.getDate();
 	private double amount;
 	private String transactionType;
 	private boolean isValid = true;
@@ -189,11 +191,11 @@ class AccountTransaction {
 	//Constructor
 	public AccountTransaction(double amount, String transactionType) {
 		this.amount = amount;
-		this.transactionType = transactionType;
+		this.transactionType = transactionType;  
 	}
 	
 	//Accessors
-	public Date getTransactionDate() {
+	public Calendar getTransactionDate() {
 		return transactionDate;
 	}
 	public double getAmount() {
@@ -212,7 +214,7 @@ class AccountTransaction {
 	public boolean isTransactionAMatch(double amount) {
 		return this.amount == amount;
 	}
-	public boolean isTransactionAMatch(Date transactionDate) {
+	public boolean isTransactionAMatch(Calendar transactionDate) {
 		return this.transactionDate == transactionDate;
 	}
 	public boolean isTransactionInvalid() {
@@ -229,25 +231,24 @@ class AccountTransaction {
 }
 
 class AccountHelper {
-	
-	//Capture and return date
-	public Date getDate() {
-		LocalDate endDate = LocalDate.now(); //end date
-		long end = endDate.toEpochDay();
-		Date date = new Date(end);
+	static private Calendar date = Calendar.getInstance();
+	static public void setDate() {
+		date.add(date.HOUR, 15);
+		date.add(date.MILLISECOND, 30000);
+	}
+	static public Calendar getDate() {
 		return date;
 	}
-	
 	//Print formatted Table (Overloaded)
 	public void header() {
 		System.out.printf("%15s%15s%-30s%s\n", "Amount", "", "Transaction", "Date");
 		System.out.println("-----------------------------------------------------------------------------------------");
 	}
-	public void tablePrinter(double amount, String transactionType, Date transactionDate) {
-		System.out.printf("%15.2f%15s%-30s%s\n", amount, "", transactionType, transactionDate);
+	public void tablePrinter(double amount, String transactionType, Calendar transactionDate) {
+		System.out.printf("%15.2f%15s%-30s%tc\n", amount, "", transactionType, transactionDate);
 	}
-	public void tablePrinter(String errorMessage, String transactionType, Date transactionDate) {
-		System.out.printf("%-15s%12s%-30s%s\n", errorMessage, "", transactionType, transactionDate);
+	public void tablePrinter(String errorMessage, String transactionType, Calendar transactionDate) {
+		System.out.printf("%-15s%12s%-30s%tc\n", errorMessage, "", transactionType, transactionDate);
 	}
 	public void resultPrinter(double result) {
 		System.out.println("---------------------");
